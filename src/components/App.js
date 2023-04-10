@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -66,6 +66,7 @@ function App() {
           id="avatar-popup"
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
+          buttonText="Сохранить"
         >
           <input
             type="url"
@@ -76,9 +77,6 @@ function App() {
             required
           />
           <span id="avatar-error" className="popup__error"></span>
-          <button type="submit" className="popup__button">
-            Сохранить
-          </button>
         </PopupWithForm>
 
         {/* edit-popup */}
@@ -88,6 +86,7 @@ function App() {
           id="edit-popup"
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
+          buttonText="Сохранить"
         >
           <input
             type="text"
@@ -111,9 +110,6 @@ function App() {
             required
           />
           <span id="about-error" className="popup__error"></span>
-          <button type="submit" className="popup__button">
-            Сохранить
-          </button>
         </PopupWithForm>
 
         {/* add-popup */}
@@ -123,6 +119,7 @@ function App() {
           id="add-popup"
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
+          buttonText="Создать"
         >
           <input
             type="text"
@@ -144,9 +141,6 @@ function App() {
             required
           />
           <span id="link-error" className="popup__error"></span>
-          <button type="submit" className="popup__button">
-            Создать
-          </button>
         </PopupWithForm>
 
         {/* delete-popup */}
@@ -155,11 +149,8 @@ function App() {
           name="delete"
           id="delete-popup"
           onClose={closeAllPopups}
-        >
-          <button type="submit" className="popup__button popup__button-delete">
-            Да
-          </button>
-        </PopupWithForm>
+          buttonText="Да"
+        ></PopupWithForm>
 
         {/* image-popup */}
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />

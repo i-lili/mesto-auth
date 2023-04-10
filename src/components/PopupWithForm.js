@@ -50,6 +50,9 @@ function PopupWithForm(props) {
         {/* Рендерим форму с динамическим именем и передаем вложенные компоненты через props.children */}
         <form className="popup__form" name={props.name} noValidate>
           {props.children}
+          <button type="submit" className="popup__button">
+            {props.buttonText}
+          </button>
         </form>
       </div>
     </section>

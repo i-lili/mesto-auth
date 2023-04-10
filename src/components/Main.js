@@ -9,26 +9,15 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
   const [userAvatar, setUserAvatar] = useState("");
   const [cards, setCards] = useState([]);
 
-  // Хук useEffect для получения информации о пользователе при монтировании компонента
+  // Хук useEffect для получения информации о пользователе и карточек при монтировании компонента
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((userInfo) => {
+    Promise.all([api.getUserInfo(), api.getInitialCards()]).then(
+      ([userInfo, initialCards]) => {
         // Обновляем состояние с информацией о пользователе
         setUserName(userInfo.name);
         setUserDescription(userInfo.about);
         setUserAvatar(userInfo.avatar);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
 
-  // Хук useEffect для получения карточек при монтировании компонента
-  useEffect(() => {
-    api
-      .getInitialCards()
-      .then((initialCards) => {
         // Обновляем состояние с карточками
         setCards(initialCards);
       })
