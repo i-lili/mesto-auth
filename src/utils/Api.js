@@ -13,7 +13,7 @@ class Api {
   }
 
   // Метод для получения карточек с сервера.
-  getInitialCards() {
+  getCardList() {
     return fetch(`${this._baseUrl}/cards`, {
       headers: this._headers,
     }).then(this._getJson);
@@ -39,7 +39,7 @@ class Api {
   }
 
   // Метод для добавления новой карточки на сервер.
-  addNewCard(data) {
+  addCard(data) {
     return fetch(`${this._baseUrl}/cards`, {
       method: "POST",
       headers: this._headers,

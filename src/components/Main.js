@@ -1,31 +1,21 @@
-import React, { useState, useEffect } from "react";
-import api from "../utils/Api";
+import React, { useContext } from "react";
 import Card from "./Card";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
-function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
-  // Объявляем состояния для имени пользователя, описания, аватара и карточек
-  const [userName, setUserName] = useState("");
-  const [userDescription, setUserDescription] = useState("");
-  const [userAvatar, setUserAvatar] = useState("");
-  const [cards, setCards] = useState([]);
+function Main({
+  // Обработчики событий, переданные в качестве пропсов из App.js
+  onEditProfile,
+  onAddPlace,
+  onEditAvatar,
+  onCardClick,
+  cards,
+  onCardLike,
+  onCardDelete,
+}) {
+  // Получаем объект текущего пользователя из контекста
+  const currentUser = useContext(CurrentUserContext);
 
-  // Хук useEffect для получения информации о пользователе и карточек при монтировании компонента
-  useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getInitialCards()]).then(
-      ([userInfo, initialCards]) => {
-        // Обновляем состояние с информацией о пользователе
-        setUserName(userInfo.name);
-        setUserDescription(userInfo.about);
-        setUserAvatar(userInfo.avatar);
-
-        // Обновляем состояние с карточками
-        setCards(initialCards);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
+  // Рендерим основной контент страницы с помощью JSX
   return (
     <main className="content">
       {/* profile */}
@@ -34,9 +24,9 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
           <div className="profile__avatar-wrapper">
             <img
               className="profile__avatar"
-              src={userAvatar}
+              src={currentUser?.avatar}
               alt="Аватар пользователя"
-              style={{ backgroundImage: `url(${userAvatar})` }}
+              style={{ backgroundImage: `url(${currentUser?.avatar})` }}
             />
             <button
               type="button"
@@ -46,14 +36,14 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
           </div>
           <div className="profile__info">
             <div className="profile__inner-wrapper">
-              <h1 className="profile__name">{userName}</h1>
+              <h1 className="profile__name">{currentUser?.name}</h1>
               <button
                 type="button"
                 className="profile__edit-button"
                 onClick={onEditProfile}
               ></button>
             </div>
-            <p className="profile__about">{userDescription}</p>
+            <p className="profile__about">{currentUser?.about}</p>
           </div>
         </div>
         <button
@@ -66,7 +56,13 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
       <section className="elements">
         {cards.map((card) => (
           // Для каждой карточки создаем компонент Card с уникальным ключом и передаем данные карточки и обработчик клика
-          <Card key={card._id} card={card} onCardClick={onCardClick} />
+          <Card
+            key={card._id}
+            card={card}
+            onCardClick={onCardClick}
+            onCardLike={onCardLike}
+            onCardDelete={onCardDelete}
+          />
         ))}
       </section>
     </main>
