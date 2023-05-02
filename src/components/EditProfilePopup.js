@@ -12,19 +12,14 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
 
   // Обновление управляемых компонентов при изменении текущего пользователя
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && isOpen) {
+      setName(currentUser.name);
+      setDescription(currentUser.about);
+    } else if (!isOpen && currentUser) {
       setName(currentUser.name);
       setDescription(currentUser.about);
     }
-  }, [currentUser]);
-
-  // Сброс состояния управляемых компонентов при закрытии попапа
-  useEffect(() => {
-    if (!isOpen && currentUser) {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
-    }
-  }, [isOpen, currentUser]);
+  }, [currentUser, isOpen]);
 
   // Обработчики изменения полей ввода
   const handleNameChange = (event) => {
@@ -38,7 +33,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   // Обработчик отправки формы
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Вызов функции onUpdateUser для обновления профиля
     onUpdateUser({
       name,
@@ -46,7 +41,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
     });
   };
 
- // Компонент PopupWithForm с управляемыми компонентами и обработчиком отправки формы
+  // Компонент PopupWithForm с управляемыми компонентами и обработчиком отправки формы
   return (
     <PopupWithForm
       title="Редактировать профиль"

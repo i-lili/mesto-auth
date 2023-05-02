@@ -1,11 +1,11 @@
-import React, { useRef } from "react";
+import React, { useState, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 
 // Создание функционального компонента AddPlacePopup
 function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
-  // Использование хуков useRef для получения доступа к значению полей ввода
-  const titleRef = useRef();
-  const linkRef = useRef();
+  // Инициализация состояний для значений инпутов
+  const [title, setTitle] = useState("");
+  const [link, setLink] = useState("");
 
   // Обработчик отправки формы
   const handleSubmit = (e) => {
@@ -13,10 +13,27 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
 
     // Вызов функции onAddPlace с объектом, содержащим название и ссылку на изображение
     onAddPlace({
-      name: titleRef.current.value,
-      link: linkRef.current.value,
+      name: title,
+      link: link,
     });
   };
+
+  // Обработчики изменения инпутов
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleLinkChange = (e) => {
+    setLink(e.target.value);
+  };
+
+  // Очистка значений инпутов при открытии попапа
+  useEffect(() => {
+    if (isOpen) {
+      setTitle("");
+      setLink("");
+    }
+  }, [isOpen]);
 
   // Рендер компонента PopupWithForm с пропсами и дочерними элементами
   return (
@@ -30,7 +47,6 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
       onSubmit={handleSubmit}
     >
       <input
-        ref={titleRef}
         type="text"
         id="title"
         className="popup__input popup__input_item_title"
@@ -39,16 +55,19 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
         minLength="2"
         maxLength="30"
         required
+        value={title}
+        onChange={handleTitleChange}
       />
       <span id="title-error" className="popup__error"></span>
       <input
-        ref={linkRef}
         type="url"
         id="link"
         className="popup__input popup__input_item_link"
         name="link"
         placeholder="Ссылка на картинку"
         required
+        value={link}
+        onChange={handleLinkChange}
       />
       <span id="link-error" className="popup__error"></span>
     </PopupWithForm>

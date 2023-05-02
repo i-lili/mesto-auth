@@ -20,6 +20,11 @@ function ImagePopup({ card, onClose }) {
     if (card) {
       document.addEventListener("keydown", handleEscClose);
     }
+
+    // Возвращаем функцию-обработчик cleanup для удаления обработчика нажатия клавиши Esc при размонтировании компонента
+    return () => {
+      document.removeEventListener("keydown", handleEscClose);
+    };
   }, [card, onClose]);
 
   return (

@@ -16,15 +16,12 @@ import "../index.css";
 function App() {
   // Объявление состояния для выбранной карточки
   const [selectedCard, setSelectedCard] = useState(null);
-
   // Объявление состояний для открытия и закрытия попапов (true - открыт, false - закрыт)
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-
   // Объявление состояния для хранения данных текущего пользователя
   const [currentUser, setCurrentUser] = useState(null);
-
   // Объявление состояния для хранения списка карточек
   const [cards, setCards] = useState([]);
 
@@ -56,8 +53,8 @@ function App() {
     setSelectedCard(card);
   };
 
-  // Эффект для получения информации о пользователе с помощью api.getUserInfo
   useEffect(() => {
+    // Получение информации о пользователе с сервера
     api
       .getUserInfo()
       .then((userData) => {
@@ -68,8 +65,8 @@ function App() {
       });
   }, []);
 
-  // Эффект для получения списка карточек с помощью api.getCardList
   useEffect(() => {
+    // Получение списка карточек с сервера
     api
       .getCardList()
       .then((cardsData) => {
@@ -85,24 +82,33 @@ function App() {
     // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
 
-    // Отправляем запрос в API и получаем обновлённые данные карточки
-    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
-    });
+    // Отправляем запрос на сервер для изменения статуса лайка на карточке
+    api
+      .changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
-  // Функция для удаления карточки
   function handleCardDelete(card) {
+    // Отправляем запрос на сервер для удаления карточки
     api
       .deleteCard(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id));
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
-  // Функция для обновления информации о пользователе
   const handleUpdateUser = (userInfo) => {
+    // Отправляем запрос на сервер для обновления информации о пользователе
     api
       .editUserInfo(userInfo)
       .then((updatedUserInfo) => {
@@ -114,9 +120,9 @@ function App() {
       });
   };
 
-  // Функция для обновления аватара пользователя
   const handleUpdateAvatar = (newAvatar) => {
     api
+      // Отправляем запрос на сервер для обновления аватара пользователя
       .updateAvatar(newAvatar.avatar)
       .then((updatedUserInfo) => {
         setCurrentUser(updatedUserInfo);
@@ -126,10 +132,10 @@ function App() {
         console.error(err);
       });
   };
-  
-  // Функция для добавления нового места
+
   const handleAddPlaceSubmit = (newPlace) => {
     api
+      // Отправляем запрос на сервер для добавления новой карточки
       .addCard(newPlace)
       .then((newCard) => {
         setCards([newCard, ...cards]);
