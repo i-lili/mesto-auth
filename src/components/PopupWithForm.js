@@ -31,7 +31,7 @@ function PopupWithForm(props) {
           props.onClose();
         }
       };
-      
+
       document.addEventListener("keydown", handleEscPress);
       // Удаление обработчика события при размонтировании компонента
       return () => {

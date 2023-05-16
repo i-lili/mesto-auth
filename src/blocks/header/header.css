@@ -4,7 +4,10 @@
   width: 100%;
   border-bottom: 1px solid rgba(84, 84, 84, 0.7);
   transition: 0.5s;
-  padding-top: 45px;
+  padding: 45px 0 19px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media screen and (max-width: 765px) {
