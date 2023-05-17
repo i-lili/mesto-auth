@@ -1,52 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useFormAndValidation } from "../hooks/useFormAndValidation";
 import PopupWithForm from "./PopupWithForm";
+import Input from "./Input";
 
-// Создание функционального компонента AddPlacePopup
 function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
-  // Инициализация состояний для значений инпутов
-  const [title, setTitle] = useState("");
-  const [link, setLink] = useState("");
+  // Инициализация хука формы и валидации
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormAndValidation();
 
-  // Обработчик отправки формы
   const handleSubmit = (e) => {
-    e.preventDefault(); // Предотвращение обновления страницы при отправке формы
-
-    // Вызов функции onAddPlace с объектом, содержащим название и ссылку на изображение
+    e.preventDefault();
     onAddPlace({
-      name: title,
-      link: link,
+      name: values.title,
+      link: values.link,
     });
   };
 
-  // Обработчики изменения инпутов
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleLinkChange = (e) => {
-    setLink(e.target.value);
-  };
-
-  // Очистка значений инпутов при открытии попапа
   useEffect(() => {
     if (isOpen) {
-      setTitle("");
-      setLink("");
+      resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, resetForm]);
 
-  // Рендер компонента PopupWithForm с пропсами и дочерними элементами
   return (
     <PopupWithForm
       title="Новое место"
-      name="add"
-      id="add-popup"
       isOpen={isOpen}
       onClose={onClose}
-      buttonText="Создать"
       onSubmit={handleSubmit}
+      buttonText="Создать"
     >
-      <input
+      <Input
         type="text"
         id="title"
         className="popup__input popup__input_item_title"
@@ -55,21 +39,25 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
         minLength="2"
         maxLength="30"
         required
-        value={title}
-        onChange={handleTitleChange}
+        value={values.title || ""}
+        onChange={handleChange}
       />
-      <span id="title-error" className="popup__error"></span>
-      <input
+      <span id="title-error" className="popup__error">
+        {errors.title}
+      </span>
+      <Input
         type="url"
         id="link"
         className="popup__input popup__input_item_link"
         name="link"
         placeholder="Ссылка на картинку"
         required
-        value={link}
-        onChange={handleLinkChange}
+        value={values.link || ""}
+        onChange={handleChange}
       />
-      <span id="link-error" className="popup__error"></span>
+      <span id="link-error" className="popup__error">
+        {errors.link}
+      </span>
     </PopupWithForm>
   );
 }

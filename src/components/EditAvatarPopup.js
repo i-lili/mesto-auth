@@ -1,40 +1,54 @@
-import React, { useRef } from "react";
+import React, { useEffect } from "react";
+import { useFormAndValidation } from "../hooks/useFormAndValidation";
 import PopupWithForm from "./PopupWithForm";
+import Input from "./Input";
 
 function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
-  // Создаем ссылку на элемент <input> для аватара, используя хук useRef()
-  const avatarInputRef = useRef();
+  // Инициализация хука формы и валидации
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormAndValidation();
 
-  // Обработчик отправки формы
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Вызываем функцию onUpdateAvatar из пропсов и передаем ей объект с новым значением аватара
+    // Обновление аватара при отправке формы
     onUpdateAvatar({
-      avatar: avatarInputRef.current.value,
+      avatar: values.avatar,
     });
-  }
-  
-  // Возвращаем разметку компонента PopupWithForm с полем ввода ссылки на аватар
+  };
+
+  const handleAvatarChange = (e) => {
+    // Обработчик изменения значения аватара
+    handleChange(e);
+  };
+
+  useEffect(() => {
+    // Сброс формы при открытии попапа
+    if (isOpen) {
+      resetForm();
+    }
+  }, [isOpen, resetForm]);
+
   return (
     <PopupWithForm
       title="Обновить аватар"
       name="avatar"
-      id="avatar-popup"
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
     >
-      <input
-        ref={avatarInputRef}
+      <Input
         type="url"
         id="avatar"
         className="popup__input popup__input_item_avatar"
         name="avatar"
         placeholder="Ссылка на аватар"
         required
+        value={values.avatar || ""}
+        onChange={handleAvatarChange}
       />
-      <span id="avatar-error" className="popup__error"></span>
+      <span id="avatar-error" className="popup__error">
+        {errors.avatar}
+      </span>
     </PopupWithForm>
   );
 }

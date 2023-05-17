@@ -1,5 +1,14 @@
 export const BASE_URL = "https://auth.nomoreparties.co";
 
+// Функция для проверки ответа сервера
+function checkResponse(response) {
+  if (response.ok) {
+    return response.json();
+  } else {
+    throw new Error(`Ошибка: ${response.status}`);
+  }
+}
+
 // Функция принимает адрес электронной почты и пароль, а затем отправляет запрос на сервер для регистрации пользователя с этими данными
 export const register = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
@@ -8,17 +17,7 @@ export const register = (email, password) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка регистрации");
-      }
-    })
-    .catch((error) => {
-      throw new Error(error.message);
-    });
+  }).then(checkResponse);
 };
 
 // Функция для авторизации пользователя
@@ -29,17 +28,7 @@ export const login = (email, password) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка авторизации");
-      }
-    })
-    .catch((error) => {
-      throw new Error(error.message);
-    });
+  }).then(checkResponse);
 };
 
 // Функция принимает токен и отправляет запрос на сервер, чтобы проверить, действителен ли токен
@@ -51,15 +40,5 @@ export const checkToken = (token) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Ошибка проверки токена");
-      }
-    })
-    .catch((error) => {
-      throw new Error(error.message);
-    });
+  }).then(checkResponse);
 };

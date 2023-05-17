@@ -1,47 +1,37 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 import CurrentUserContext from "../contexts/CurrentUserContext";
+import Input from "./Input";
+import { useFormAndValidation } from "../hooks/useFormAndValidation";
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
-  // Использование хуков состояния, для управления полями ввода в попапе
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
   // Получение текущего пользователя из контекста
   const currentUser = useContext(CurrentUserContext);
 
-  // Обновление управляемых компонентов при изменении текущего пользователя
+  // Инициализация хука формы и валидации
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormAndValidation();
+
+  // Сброс формы при изменении текущего пользователя или открытии модального окна
   useEffect(() => {
     if (currentUser && isOpen) {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
-    } else if (!isOpen && currentUser) {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
+      resetForm({
+        name: currentUser.name,
+        about: currentUser.about,
+      });
     }
-  }, [currentUser, isOpen]);
-
-  // Обработчики изменения полей ввода
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleDescriptionChange = (event) => {
-    setDescription(event.target.value);
-  };
+  }, [currentUser, isOpen, resetForm]);
 
   // Обработчик отправки формы
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Вызов функции onUpdateUser для обновления профиля
+    // Вызываем функцию обновления данных пользователя
     onUpdateUser({
-      name,
-      about: description,
+      name: values.name,
+      about: values.about,
     });
   };
 
-  // Компонент PopupWithForm с управляемыми компонентами и обработчиком отправки формы
   return (
     <PopupWithForm
       title="Редактировать профиль"
@@ -51,7 +41,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       onClose={onClose}
       onSubmit={handleSubmit}
     >
-      <input
+      <Input
         type="text"
         id="name"
         className="popup__input popup__input_item_name"
@@ -60,11 +50,13 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
         minLength="2"
         maxLength="40"
         required
-        value={name}
-        onChange={handleNameChange}
+        value={values.name || ""}
+        onChange={handleChange}
       />
-      <span id="name-error" className="popup__error"></span>
-      <input
+      <span id="name-error" className="popup__error">
+        {errors.name}
+      </span>
+      <Input
         type="text"
         id="about"
         className="popup__input popup__input_item_about"
@@ -73,10 +65,12 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
         minLength="2"
         maxLength="200"
         required
-        value={description}
-        onChange={handleDescriptionChange}
+        value={values.about || ""}
+        onChange={handleChange}
       />
-      <span id="about-error" className="popup__error"></span>
+      <span id="about-error" className="popup__error">
+        {errors.about}
+      </span>
     </PopupWithForm>
   );
 }
